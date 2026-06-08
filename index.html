@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Hamara Printing Press</title>
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -12,10 +12,12 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; scroll-behavior: smooth; }
         :root { --primary: #1e3c72; --secondary: #ec008c; --dark: #1f1f2e; --light: #f8f9fa; --yellow: #ffd700; }
-        body { background-color: white; color: #333; overflow-x: hidden; }
+        
+        /* Strict overflow rule to completely kill the white side-line gap */
+        html, body { background-color: white; color: #333; overflow-x: hidden; width: 100%; position: relative; }
 
         /* Navigation */
-        header { display: flex; justify-content: space-between; align-items: center; padding: 15px 8%; background: #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 1000; }
+        header { display: flex; justify-content: space-between; align-items: center; padding: 15px 8%; background: #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 1000; width: 100%; }
         .logo-brand { display: flex; align-items: center; text-decoration: none; }
         .logo img { height: 65px; display: block; } 
 
@@ -27,15 +29,18 @@
         nav ul li a.active { color: var(--primary); }
         nav ul li a.active::after { width: 100%; }
 
-        .btn-quote { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: #fff; padding: 10px 25px; border-radius: 30px; text-decoration: none; font-weight: 600; }
+        .btn-quote { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: #fff; padding: 10px 25px; border-radius: 30px; text-decoration: none; font-weight: 600; text-align: center; white-space: nowrap; }
 
-        /* Hero Section */
-        .hero { position: relative; height: 85vh; display: flex; align-items: center; justify-content: center; overflow: hidden; text-align: center; color: #fff; padding: 0 20px; }
-        .video-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; pointer-events: none; overflow: hidden; }
-        .video-container video { position: absolute; top: 50%; left: 50%; min-width: 100%; min-height: 100%; width: auto; height: auto; transform: translate(-50%, -50%); object-fit: cover; z-index: -2; }
-        .video-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); z-index: -1; }
+        /* Mobile Hamburger Menu Icon Setup */
+        .menu-toggle { display: none; font-size: 26px; color: var(--dark); cursor: pointer; background: none; border: none; outline: none; padding: 5px; z-index: 1001; }
+
+        /* Hero Section Fix with absolute video enforcement */
+        .hero { position: relative; height: 85vh; display: flex; align-items: center; justify-content: center; overflow: hidden; text-align: center; color: #fff; padding: 0 20px; width: 100%; background: #000; }
+        .video-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; overflow: hidden; }
+        .video-container video { position: absolute; top: 50%; left: 50%; min-width: 100%; min-height: 100%; width: auto; height: auto; transform: translate(-50%, -50%); object-fit: cover; }
+        .video-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.65); z-index: 2; }
         
-        .hero-text { max-width: 850px; z-index: 1; }
+        .hero-text { max-width: 850px; z-index: 3; position: relative; }
         .badge { background-color: var(--yellow); color: #000; padding: 5px 15px; font-weight: 700; border-radius: 5px; display: inline-block; margin-bottom: 20px; font-size: 14px; }
         
         .hero-text h1 { font-size: 3.8rem; font-weight: 800; color: #fff; line-height: 1.1; margin-bottom: 10px; text-shadow: 2px 2px 10px rgba(0,0,0,0.5); }
@@ -45,12 +50,13 @@
         
         .hero-btns { display: flex; gap: 20px; justify-content: center; }
         .btn-main { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: #fff; padding: 12px 30px; border-radius: 30px; text-decoration: none; font-weight: 600; transition: 0.3s; }
+        .btn-main:hover { opacity: 0.9; }
         .btn-sub { border: 2px solid #fff; color: #fff; padding: 12px 30px; border-radius: 30px; text-decoration: none; font-weight: 600; transition: 0.3s; }
         .btn-sub:hover { background: #fff; color: #000; }
 
-        /* Sections General styling */
-        section, div.clients-section { scroll-margin-top: 95px; } 
-        .about, .services, .machines, .portfolio, .contact, .clients-section { padding: 80px 8%; text-align: center; }
+        /* Sections padding layout */
+        section, div.clients-section { scroll-margin-top: 95px; width: 100%; } 
+        .about, .services, .machines, .portfolio, .contact, .clients-section, .qr-section { padding: 80px 8%; text-align: center; }
         .about, .machines { background: var(--light); }
         .section-title { font-size: 2.5rem; color: var(--dark); margin-bottom: 40px; position: relative; display: inline-block; }
         .section-title::after { content: ''; width: 60px; height: 4px; background: var(--secondary); position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%); }
@@ -65,36 +71,29 @@
         /* Floating Stats Boxes */
         .stats-container { display: flex; justify-content: space-between; gap: 20px; margin-top: 40px; }
         .stat-box { background: #fff; padding: 30px; border-radius: 15px; flex: 1; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border-bottom: 4px solid var(--primary); transition: 0.3s; }
-        .stat-box:hover { transform: translateY(-10px) !important; border-color: var(--secondary); }
+        .stat-box:hover { transform: translateY(-10px); border-color: var(--secondary); }
         .stat-box h2 { font-size: 2.5rem; color: var(--secondary); margin-bottom: 10px; }
         .stat-box p { font-weight: 600; color: #555; }
 
-        /* Services Available For Our Valuable Clients Section */
-        .clients-section { background: #fff; border-top: 1px solid #eee; }
+        /* Services Grid for Clients */
         .clients-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; margin-top: 40px; align-items: start; }
-        
-        /* Master Box Container - Equal Height */
-        .client-card-container { display: flex; flex-direction: column; background: var(--light); border-radius: 16px; border: 1px solid #eef0f3; overflow: hidden; transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); min-height: 180px; position: relative; }
+        .client-card-container { display: flex; flex-direction: column; background: var(--light); border-radius: 16px; border: 1px solid #eef0f3; overflow: hidden; transition: all 0.4s ease; min-height: 180px; position: relative; }
         .client-card-container:hover { transform: translateY(-8px); box-shadow: 0 15px 35px rgba(30,60,114,0.15); border-color: var(--primary); background: #fff; }
         
-        /* Main Head Box */
         .client-main-box { padding: 30px 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 15px; flex-grow: 1; min-height: 180px; }
         .client-main-box i { font-size: 2.6rem; color: var(--primary); transition: 0.3s; }
         .client-card-container:hover .client-main-box i { color: var(--secondary); transform: scale(1.1); }
-        .client-main-box h4 { font-size: 1.15rem; color: var(--dark); font-weight: 700; line-height: 1.4; padding: 0 5px; }
+        .client-main-box h4 { font-size: 1.15rem; color: var(--dark); font-weight: 700; line-height: 1.4; }
 
-        /* Expandable Drawer Animation Panel */
-        .client-drawer-panel { max-height: 0; overflow: hidden; opacity: 0; background: #ffffff; transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); border-top: 0 solid rgba(0,0,0,0.05); }
-        .client-card-container:hover .client-drawer-panel { max-height: 350px; opacity: 1; border-top-width: 1px; overflow-y: auto; }
+        /* Dropdown Expand Panel Setup */
+        .client-drawer-panel { max-height: 0; overflow: hidden; opacity: 0; background: #ffffff; transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
+        .client-card-container:hover .client-drawer-panel { max-height: 350px; opacity: 1; border-top: 1px solid rgba(0,0,0,0.05); overflow-y: auto; }
         
-        /* Drawer Content List - BIG FONT & CHOTA CIRCLE (BULLET) */
         .drawer-content-list { padding: 20px 25px; text-align: left; list-style: none; display: flex; flex-direction: column; gap: 14px; background: #fafafa; }
-        .drawer-content-list li { font-family: 'Aharoni', 'Impact', 'Arial Black', sans-serif; font-size: 18px; color: #111; font-weight: 900; letter-spacing: 0.5px; display: flex; align-items: center; gap: 12px; line-height: 1; white-space: nowrap; }
-        
-        /* Circle Bullet Point instead of Tick */
+        .drawer-content-list li { font-size: 17px; color: #111; font-weight: 800; display: flex; align-items: center; gap: 12px; }
         .drawer-content-list li::before { content: ""; display: inline-block; width: 8px; height: 8px; background-color: var(--secondary); border-radius: 50%; flex-shrink: 0; }
 
-        /* Services Grid */
+        /* General Services Section */
         .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; margin-top: 50px; }
         .service-card { background: #fff; padding: 40px 30px; border-radius: 15px; border: 1px solid #eee; transition: 0.3s; }
         .service-card:hover { transform: translateY(-10px); border-color: var(--primary); }
@@ -102,75 +101,88 @@
         .service-card h3 { margin-bottom: 15px; color: var(--dark); }
         .service-card p { color: #666; font-size: 14px; }
 
-        /* Machines Grid */
+        /* Machines Gallery */
         .machines-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; margin-top: 50px; }
         .machine-card { background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.05); transition: 0.3s; }
         .machine-card:hover { transform: scale(1.03); }
         .machine-card img { width: 100%; height: 220px; object-fit: cover; }
         .machine-card h3 { padding: 20px; color: var(--dark); font-size: 18px; }
 
-        /* Portfolio Grid */
+        /* Portfolio Setup */
         .portfolio-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 25px; margin-top: 40px; }
         .portfolio-card { background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 6px 18px rgba(0,0,0,0.06); border: 1px solid #eee; transition: 0.3s; display: flex; flex-direction: column; }
-        .portfolio-card:hover { transform: translateY(-8px); box-shadow: 0 12px 25px rgba(0,0,0,0.12); border-color: var(--secondary); }
+        .portfolio-card:hover { transform: translateY(-8px); border-color: var(--secondary); }
         .portfolio-img-wrapper { width: 100%; height: 210px; overflow: hidden; }
         .portfolio-card img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s ease; }
         .portfolio-card:hover img { transform: scale(1.08); }
         .portfolio-name-box { padding: 15px; background: #fff; text-align: center; border-top: 1px solid #f0f0f0; }
-        .portfolio-name-box h4 { font-size: 15px; font-weight: 600; color: var(--dark); margin: 0; letter-spacing: 0.5px; }
+        .portfolio-name-box h4 { font-size: 15px; font-weight: 600; color: var(--dark); margin: 0; }
 
-        /* Contact Details */
-        .contact { background: linear-gradient(135deg, #12121c, #1f1f2e); color: #fff; text-align: left; }
+        /* Contact Details Layout [As per User Image] */
+        .contact { background: linear-gradient(135deg, #12121c, #1f1f2e); color: #fff; text-align: left; width: 100%; }
         .contact-container { display: flex; gap: 50px; margin-top: 40px; }
         .contact-info { flex: 1; }
-        .contact-info h2 { font-size: 2.5rem; margin-bottom: 20px; color: #fff; }
         
-        .team-member { margin-bottom: 15px; }
-        .team-name { font-size: 1.8rem; font-weight: 700; color: #fff; margin: 0; line-height: 1.2; }
-        .team-role { color: var(--yellow); font-size: 1rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+        .team-member { margin-bottom: 20px; }
+        .team-name { font-size: 1.9rem; font-weight: 700; color: #fff; margin: 0; line-height: 1.1; letter-spacing: 0.5px; }
+        .team-role { color: var(--yellow); font-size: 0.95rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; margin-top: 3px; display: inline-block; }
         
-        .contact-details { margin-top: 30px; }
+        .contact-details { margin-top: 35px; }
         .contact-item { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
-        .contact-item i { color: var(--secondary); font-size: 1.2rem; }
-        .contact-form { flex: 1; background: rgba(255,255,255,0.05); padding: 40px; border-radius: 15px; }
+        .contact-item i { color: var(--secondary); font-size: 1.3rem; width: 25px; text-align: center; }
+        .contact-item span, .contact-item a { color: #fff; text-decoration: none; font-size: 16px; font-weight: 400; transition: 0.3s; }
+        .contact-item a:hover { color: var(--yellow); }
+
+        .contact-form { flex: 1; background: rgba(255,255,255,0.04); padding: 40px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.05); }
         .form-group { margin-bottom: 20px; }
-        .form-group input, .form-group textarea { width: 100%; padding: 15px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; color: #fff; outline: none; }
-        .form-group input:focus, .form-group textarea:focus { border-color: var(--secondary); }
-        .btn-submit { width: 100%; padding: 15px; background: linear-gradient(135deg, var(--primary), var(--secondary)); border: none; border-radius: 30px; color: #fff; font-weight: 600; cursor: pointer; }
+        .form-group input, .form-group textarea { width: 100%; padding: 15px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 8px; color: #fff; outline: none; font-size: 15px; transition: 0.3s; }
+        .form-group input:focus, .form-group textarea:focus { border-color: var(--secondary); background: rgba(255,255,255,0.12); }
+        .btn-submit { width: 100%; padding: 15px; background: linear-gradient(135deg, var(--primary), var(--secondary)); border: none; border-radius: 30px; color: #fff; font-weight: 600; cursor: pointer; font-size: 16px; transition: 0.3s; }
+        .btn-submit:hover { opacity: 0.95; transform: translateY(-2px); }
 
-        footer { background: #0b0b11; text-align: center; padding: 30px; color: #777; font-size: 14px; border-top: 1px solid #1f1f2e; }
+        /* VIP QR Codes Block Section */
+        .qr-section { background: var(--light); border-top: 1px solid #eee; width: 100%; padding: 80px 8%; text-align: center; }
+        .qr-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 20px; margin-top: 35px; max-width: 1100px; margin-left: auto; margin-right: auto; }
+        .qr-card { background: #fff; padding: 20px 15px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.04); text-align: center; border: 1px solid #eef0f3; transition: 0.3s; }
+        .qr-card:hover { transform: translateY(-5px); border-color: var(--primary); }
+        .qr-card img { width: 100%; max-width: 140px; height: auto; aspect-ratio: 1/1; object-fit: contain; margin-bottom: 12px; }
+        .qr-card p { font-size: 14px; font-weight: 700; color: var(--dark); display: flex; align-items: center; justify-content: center; gap: 8px; margin: 0; }
+        .qr-card p i { color: var(--primary); font-size: 16px; }
 
-        /* ==========================================================================
-           MOBILE RESPONSIVE STYLES (Zabardast adjustment for mobile screens)
-           ========================================================================== */
+        footer { background: #0b0b11; text-align: center; padding: 30px; color: #777; font-size: 14px; border-top: 1px solid #1f1f2e; width: 100%; }
+
+        /* Responsive Settings */
+        @media (max-width: 1024px) {
+            header { padding: 15px 5%; }
+            .menu-toggle { display: block; }
+            nav { position: absolute; top: 100%; left: 0; width: 100%; background: #fff; box-shadow: 0 10px 15px rgba(0,0,0,0.05); max-height: 0; overflow: hidden; transition: max-height 0.4s ease-in-out; }
+            nav.active { max-height: 420px; }
+            nav ul { flex-direction: column; gap: 0; padding: 15px 0; text-align: center; }
+            nav ul li { padding: 12px 0; border-bottom: 1px solid #f5f5f5; }
+            nav ul li a::after { display: none; }
+            .btn-quote { display: none; }
+            .qr-grid { grid-template-columns: repeat(3, 1fr); gap: 15px; }
+        }
+
         @media (max-width: 768px) {
-            header { padding: 15px 4%; flex-direction: column; gap: 12px; text-align: center; }
-            nav ul { gap: 12px; flex-wrap: wrap; justify-content: center; }
-            .btn-quote { display: inline-block; padding: 6px 15px; font-size: 14px; }
-            
-            .hero { height: auto; padding: 100px 15px 60px 15px; }
-            .hero-text h1 { font-size: 2.2rem; }
-            .hero-text h2 { font-size: 1.5rem; }
-            .hero-text h3 { font-size: 1.2rem; }
+            .hero { height: auto; padding: 120px 15px 60px 15px; }
+            .hero-text h1 { font-size: 2.3rem; }
+            .hero-text h2 { font-size: 1.6rem; }
+            .hero-text h3 { font-size: 1.3rem; }
             .hero-text p { font-size: 15px; }
             .hero-btns { flex-direction: column; gap: 12px; width: 100%; max-width: 280px; margin: 0 auto; }
-            .btn-main, .btn-sub { width: 100%; padding: 10px 20px; }
-
-            .about, .services, .machines, .portfolio, .contact, .clients-section { padding: 40px 4%; }
-            .section-title { font-size: 1.8rem; margin-bottom: 30px; }
-            
+            .btn-main, .btn-sub { width: 100%; padding: 10px 20px; text-align: center; }
+            .about, .services, .machines, .portfolio, .contact, .clients-section, .qr-section { padding: 50px 5%; }
+            .section-title { font-size: 1.9rem; }
             .about-content { flex-direction: column; gap: 25px; text-align: center; }
-            .about-text h3 { font-size: 1.4rem; }
-            
-            /* Stats boxes responsive layout */
-            .stats-container { flex-direction: column; gap: 15px; margin-top: 25px; }
-            .stat-box { padding: 20px; }
-            .stat-box h2 { font-size: 2rem; }
-
-            .contact-container { flex-direction: column; gap: 30px; }
-            .contact-info h2 { font-size: 1.8rem; }
-            .team-name { font-size: 1.4rem; }
-            .contact-form { padding: 20px; }
+            .stats-container { flex-direction: column; gap: 15px; }
+            .contact-container { flex-direction: column; gap: 35px; }
+            .contact-form { padding: 30px 20px; }
+            .qr-grid { grid-template-columns: repeat(2, 1fr); gap: 15px; }
+        }
+        
+        @media (max-width: 480px) {
+            .qr-grid { grid-template-columns: 1fr; max-width: 220px; margin-left: auto; margin-right: auto; }
         }
     </style>
 </head>
@@ -180,7 +192,10 @@
         <a href="#home" class="logo-brand">
             <div class="logo"><img src="logo.png" alt="Logo"></div>
         </a>
-        <nav>
+        <button class="menu-toggle" id="mobile-menu-btn">
+            <i class="fa-solid fa-bars"></i>
+        </button>
+        <nav id="nav-menu">
             <ul>
                 <li><a href="#home" class="nav-link active">Home</a></li>
                 <li><a href="#about" class="nav-link">About Us</a></li>
@@ -195,9 +210,8 @@
 
     <section id="home" class="hero">
         <div class="video-container">
-            <video autoplay muted loop playsinline>
+            <video autoplay muted loop playsinline preload="auto">
                 <source src="press-video.mp4" type="video/mp4">
-                Your browser does not support the video tag.
             </video>
         </div>
         <div class="video-overlay"></div>
@@ -218,7 +232,7 @@
     <section id="about" class="about">
         <h2 class="section-title" data-aos="fade-up">About Us</h2>
         <div class="about-content">
-            <div class="about-img" data-aos="fade-right"><img src="about-printing.jpg" alt="Work"></div>
+            <div class="about-img" data-aos="fade-right"><img src="about-printing.jpg" alt="Work Machine"></div>
             <div class="about-text" data-aos="fade-left">
                 <h3>Trusted Printing Partner For Over 37 Years</h3>
                 <p>We specialize in Offset Printing, Digital Printing, Flex Printing, UV Printing, Screen Printing, and Creative Designing.</p>
@@ -226,15 +240,15 @@
         </div>
 
         <div class="stats-container">
-            <div class="stat-box" data-aos="slide-up" data-aos-duration="1200" data-aos-delay="100">
+            <div class="stat-box" data-aos="slide-up" data-aos-duration="1000" data-aos-delay="100">
                 <h2>37+</h2>
                 <p>Years of Industrial Trust</p>
             </div>
-            <div class="stat-box" data-aos="slide-up" data-aos-duration="1200" data-aos-delay="300">
+            <div class="stat-box" data-aos="slide-up" data-aos-duration="1000" data-aos-delay="200">
                 <h2>5000+</h2>
                 <p>Local Clients</p>
             </div>
-            <div class="stat-box" data-aos="slide-up" data-aos-duration="1200" data-aos-delay="500">
+            <div class="stat-box" data-aos="slide-up" data-aos-duration="1000" data-aos-delay="300">
                 <h2>4000+</h2>
                 <p>Corporate Orders</p>
             </div>
@@ -260,7 +274,7 @@
                 </div>
             </div>
 
-            <div class="client-card-container" data-aos="fade-up" data-aos-delay="200">
+            <div class="client-card-container" data-aos="fade-up" data-aos-delay="150">
                 <div class="client-main-box">
                     <i class="fa-solid fa-microscope"></i>
                     <h4>Laboratory / Ultrasound & Eye Clinic</h4>
@@ -275,7 +289,7 @@
                 </div>
             </div>
 
-            <div class="client-card-container" data-aos="fade-up" data-aos-delay="300">
+            <div class="client-card-container" data-aos="fade-up" data-aos-delay="200">
                 <div class="client-main-box">
                     <i class="fa-solid fa-shirt"></i>
                     <h4>Textile / Towel Industries</h4>
@@ -289,7 +303,7 @@
                 </div>
             </div>
 
-            <div class="client-card-container" data-aos="fade-up" data-aos-delay="400">
+            <div class="client-card-container" data-aos="fade-up" data-aos-delay="250">
                 <div class="client-main-box">
                     <i class="fa-solid fa-hospital"></i>
                     <h4>Clinics / Hospitals</h4>
@@ -302,7 +316,7 @@
                 </div>
             </div>
 
-            <div class="client-card-container" data-aos="fade-up" data-aos-delay="500">
+            <div class="client-card-container" data-aos="fade-up" data-aos-delay="300">
                 <div class="client-main-box">
                     <i class="fa-solid fa-hotel"></i>
                     <h4>Hotels / Pakwan</h4>
@@ -316,7 +330,7 @@
                 </div>
             </div>
 
-            <div class="client-card-container" data-aos="fade-up" data-aos-delay="600">
+            <div class="client-card-container" data-aos="fade-up" data-aos-delay="350">
                 <div class="client-main-box">
                     <i class="fa-solid fa-scissors"></i>
                     <h4>Garments</h4>
@@ -330,7 +344,7 @@
                 </div>
             </div>
 
-            <div class="client-card-container" data-aos="fade-up" data-aos-delay="700">
+            <div class="client-card-container" data-aos="fade-up" data-aos-delay="400">
                 <div class="client-main-box">
                     <i class="fa-solid fa-plug"></i>
                     <h4>Electronic / Installment Shops</h4>
@@ -345,7 +359,7 @@
                 </div>
             </div>
 
-            <div class="client-card-container" data-aos="fade-up" data-aos-delay="800">
+            <div class="client-card-container" data-aos="fade-up" data-aos-delay="450">
                 <div class="client-main-box">
                     <i class="fa-solid fa-building"></i>
                     <h4>Property / Builders</h4>
@@ -389,76 +403,43 @@
     <section id="portfolio" class="portfolio">
         <h2 class="section-title" data-aos="fade-up">Our Portfolio</h2>
         <div class="portfolio-grid">
-            
-            <div class="portfolio-card" data-aos="fade-up" data-aos-delay="100">
-                <div class="portfolio-img-wrapper"><img src="work1.jpg" alt="Visiting card"></div>
-                <div class="portfolio-name-box"><h4>Visiting Card</h4></div>
-            </div>
-            
-            <div class="portfolio-card" data-aos="fade-up" data-aos-delay="200">
-                <div class="portfolio-img-wrapper"><img src="work2.jpg" alt="Panaflex"></div>
-                <div class="portfolio-name-box"><h4>Panaflex</h4></div>
-            </div>
-            
-            <div class="portfolio-card" data-aos="fade-up" data-aos-delay="300">
-                <div class="portfolio-img-wrapper"><img src="work3.jpg" alt="Letter Head"></div>
-                <div class="portfolio-name-box"><h4>Letter Head</h4></div>
-            </div>
-            
-            <div class="portfolio-card" data-aos="fade-up" data-aos-delay="400">
-                <div class="portfolio-img-wrapper"><img src="work4.jpg" alt="Bill Book"></div>
-                <div class="portfolio-name-box"><h4>Bill Book</h4></div>
-            </div>
-            
-            <div class="portfolio-card" data-aos="fade-up" data-aos-delay="100">
-                <div class="portfolio-img-wrapper"><img src="work5.jpg" alt="Shadi Card"></div>
-                <div class="portfolio-name-box"><h4>Shadi Card</h4></div>
-            </div>
-            
-            <div class="portfolio-card" data-aos="fade-up" data-aos-delay="200">
-                <div class="portfolio-img-wrapper"><img src="work6.jpg" alt="Garments Tag"></div>
-                <div class="portfolio-name-box"><h4>Garments Tag</h4></div>
-            </div>
-            
-            <div class="portfolio-card" data-aos="fade-up" data-aos-delay="300">
-                <div class="portfolio-img-wrapper"><img src="work7.jpg" alt="Pamphlet"></div>
-                <div class="portfolio-name-box"><h4>Pamphlet</h4></div>
-            </div>
-            
-            <div class="portfolio-card" data-aos="fade-up" data-aos-delay="400">
-                <div class="portfolio-img-wrapper"><img src="work8.jpg" alt="Satin Label"></div>
-                <div class="portfolio-name-box"><h4>Satin Label</h4></div>
-            </div>
-
-            <div class="portfolio-card" data-aos="fade-up" data-aos-delay="500">
-                <div class="portfolio-img-wrapper"><img src="work9.jpg" alt="Woven Label"></div>
-                <div class="portfolio-name-box"><h4>Woven Label</h4></div>
-            </div>
-
+            <div class="portfolio-card" data-aos="fade-up" data-aos-delay="100"><div class="portfolio-img-wrapper"><img src="work1.jpg" alt="Portfolio Image"></div><div class="portfolio-name-box"><h4>Visiting Card</h4></div></div>
+            <div class="portfolio-card" data-aos="fade-up" data-aos-delay="150"><div class="portfolio-img-wrapper"><img src="work2.jpg" alt="Portfolio Image"></div><div class="portfolio-name-box"><h4>Panaflex</h4></div></div>
+            <div class="portfolio-card" data-aos="fade-up" data-aos-delay="200"><div class="portfolio-img-wrapper"><img src="work3.jpg" alt="Portfolio Image"></div><div class="portfolio-name-box"><h4>Letter Head</h4></div></div>
+            <div class="portfolio-card" data-aos="fade-up" data-aos-delay="250"><div class="portfolio-img-wrapper"><img src="work4.jpg" alt="Portfolio Image"></div><div class="portfolio-name-box"><h4>Bill Book</h4></div></div>
+            <div class="portfolio-card" data-aos="fade-up" data-aos-delay="300"><div class="portfolio-img-wrapper"><img src="work5.jpg" alt="Portfolio Image"></div><div class="portfolio-name-box"><h4>Shadi Card</h4></div></div>
+            <div class="portfolio-card" data-aos="fade-up" data-aos-delay="350"><div class="portfolio-img-wrapper"><img src="work6.jpg" alt="Portfolio Image"></div><div class="portfolio-name-box"><h4>Garments Tag</h4></div></div>
+            <div class="portfolio-card" data-aos="fade-up" data-aos-delay="400"><div class="portfolio-img-wrapper"><img src="work7.jpg" alt="Portfolio Image"></div><div class="portfolio-name-box"><h4>Pamphlet</h4></div></div>
+            <div class="portfolio-card" data-aos="fade-up" data-aos-delay="450"><div class="portfolio-img-wrapper"><img src="work8.jpg" alt="Portfolio Image"></div><div class="portfolio-name-box"><h4>Satin Label</h4></div></div>
+            <div class="portfolio-card" data-aos="fade-up" data-aos-delay="500"><div class="portfolio-img-wrapper"><img src="work9.jpg" alt="Portfolio Image"></div><div class="portfolio-name-box"><h4>Woven Label</h4></div></div>
         </div>
     </section>
 
     <section id="contact" class="contact">
         <div class="contact-container">
             <div class="contact-info" data-aos="fade-right">
-                <h2>Contact Us</h2>
+                <h2 style="font-size: 2.5rem; margin-bottom: 25px;">Contact Us</h2>
                 
                 <div class="team-member">
                     <p class="team-name">Akhyar Ahmed</p>
-                    <span class="team-role">Founder</span>
-                </div>
-                <div class="team-member" style="margin-top: 10px;">
-                    <p class="team-name">Absar Ahmed</p>
                     <span class="team-role">CEO</span>
+                </div>
+                <div class="team-member">
+                    <p class="team-name">Absar Ahmed</p>
+                    <span class="team-role">Manager</span>
                 </div>
 
                 <div class="contact-details">
-                    <div class="contact-item"><i class="fa-brands fa-whatsapp"></i><span>0345-8292319</span></div>
+                    <div class="contact-item"><i class="fa-brands fa-whatsapp"></i><span><a href="https://wa.me/923458292319" target="_blank">0345-8292319</a></span></div>
                     <div class="contact-item"><i class="fa-solid fa-phone"></i><span>0345-8292319 / 0336-9282319</span></div>
-                    <div class="contact-item"><i class="fa-solid fa-envelope"></i><span>hamarap@gmail.com</span></div>
+                    <div class="contact-item"><i class="fa-solid fa-envelope"></i><span><a href="mailto:hamarap@gmail.com">hamarap@gmail.com</a></span></div>
+                    <div class="contact-item"><i class="fa-brands fa-instagram"></i><span><a href="https://instagram.com/hamara.printing.press" target="_blank">hamara.printing.press</a></span></div>
+                    <div class="contact-item"><i class="fa-brands fa-facebook"></i><span><a href="https://www.facebook.com/profile.php?id=100004070285245" target="_blank">Hamara Printing Press</a></span></div>
+                    <div class="contact-item"><i class="fa-brands fa-linkedin"></i><span><a href="https://www.linkedin.com/in/hamara-printing-press-687615414" target="_blank">Hamara Printing Press</a></span></div>
                     <div class="contact-item"><i class="fa-solid fa-location-dot"></i><span>Shop # 73-75, Sector 5-G, Main Road Sindhi Hotel, New Karachi.</span></div>
                 </div>
             </div>
+            
             <div class="contact-form" data-aos="fade-left">
                 <form action="https://formspree.io/f/mojzvogo" method="POST">
                     <div class="form-group"><input type="text" name="Name" placeholder="Your Name" required></div>
@@ -470,13 +451,61 @@
         </div>
     </section>
 
+    <section class="qr-section">
+        <h2 class="section-title" data-aos="fade-up">Scan & Connect With Us</h2>
+        <div class="qr-grid">
+            <div class="qr-card" data-aos="zoom-in" data-aos-delay="100">
+                <img src="qr-whatsapp.png" alt="WhatsApp QR Link">
+                <p><i class="fa-brands fa-whatsapp"></i> WhatsApp</p>
+            </div>
+            <div class="qr-card" data-aos="zoom-in" data-aos-delay="200">
+                <img src="qr-instagram.png" alt="Instagram QR Link">
+                <p><i class="fa-brands fa-instagram"></i> Instagram</p>
+            </div>
+            <div class="qr-card" data-aos="zoom-in" data-aos-delay="300">
+                <img src="qr-facebook.png" alt="Facebook QR Link">
+                <p><i class="fa-brands fa-facebook-f"></i> Facebook</p>
+            </div>
+            <div class="qr-card" data-aos="zoom-in" data-aos-delay="400">
+                <img src="qr-linkedin.png" alt="LinkedIn QR Link">
+                <p><i class="fa-brands fa-linkedin"></i> LinkedIn</p>
+            </div>
+            <div class="qr-card" data-aos="zoom-in" data-aos-delay="500">
+                <img src="qr-website.png" alt="Website QR Link">
+                <p><i class="fa-solid fa-globe"></i> Our Website</p>
+            </div>
+        </div>
+    </section>
+
     <footer><p>&copy; 2026 Hamara Printing Press. All Rights Reserved.</p></footer>
 
     <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
     <script>
         AOS.init({ once: false, mirror: true });
 
-        // Scroll automatic navigation highlight feature
+        // Responsive Smartphone Menu Toggling Feature Fix
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const navMenu = document.getElementById('nav-menu');
+        const mobileLinks = document.querySelectorAll('.nav-link');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            navMenu.classList.toggle('active');
+            const icon = mobileMenuBtn.querySelector('i');
+            if(navMenu.classList.contains('active')) {
+                icon.className = 'fa-solid fa-xmark';
+            } else {
+                icon.className = 'fa-solid fa-bars';
+            }
+        });
+
+        mobileLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                navMenu.classList.remove('active');
+                mobileMenuBtn.querySelector('i').className = 'fa-solid fa-bars';
+            });
+        });
+
+        // Auto Highlighting Links matching Window scrolling positions
         const sections = document.querySelectorAll('section, div.clients-section');
         const navLinks = document.querySelectorAll('.nav-link');
 
