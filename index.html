@@ -118,10 +118,10 @@
         .portfolio-name-box { padding: 15px; background: #fff; text-align: center; border-top: 1px solid #f0f0f0; }
         .portfolio-name-box h4 { font-size: 15px; font-weight: 600; color: var(--dark); margin: 0; }
 
-        /* Contact Details Layout [As per User Image] */
+        /* Contact Details Layout */
         .contact { background: linear-gradient(135deg, #12121c, #1f1f2e); color: #fff; text-align: left; width: 100%; }
-        .contact-container { display: flex; gap: 50px; margin-top: 40px; }
-        .contact-info { flex: 1; }
+        .contact-container { display: flex; gap: 50px; margin-top: 40px; align-items: stretch; }
+        .contact-info { flex: 1; display: flex; flex-direction: column; justify-content: center; }
         
         .team-member { margin-bottom: 20px; }
         .team-name { font-size: 1.9rem; font-weight: 700; color: #fff; margin: 0; line-height: 1.1; letter-spacing: 0.5px; }
@@ -133,14 +133,16 @@
         .contact-item span, .contact-item a { color: #fff; text-decoration: none; font-size: 16px; font-weight: 400; transition: 0.3s; }
         .contact-item a:hover { color: var(--yellow); }
 
-        .contact-form { flex: 1; background: rgba(255,255,255,0.04); padding: 40px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.05); }
-        .form-group { margin-bottom: 20px; }
+        /* Clean Form Style - Purple borders removed */
+        .contact-form { flex: 1; background: rgba(255,255,255,0.04); padding: 40px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: column; justify-content: space-between; }
+        .contact-form form { display: flex; flex-direction: column; gap: 20px; height: 100%; }
+        .form-group { margin: 0; width: 100%; }
         .form-group input, .form-group textarea { width: 100%; padding: 15px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 8px; color: #fff; outline: none; font-size: 15px; transition: 0.3s; }
         .form-group input:focus, .form-group textarea:focus { border-color: var(--secondary); background: rgba(255,255,255,0.12); }
-        .btn-submit { width: 100%; padding: 15px; background: linear-gradient(135deg, var(--primary), var(--secondary)); border: none; border-radius: 30px; color: #fff; font-weight: 600; cursor: pointer; font-size: 16px; transition: 0.3s; }
+        .btn-submit { width: 100%; padding: 15px; background: linear-gradient(135deg, var(--primary), var(--secondary)); border: none; border-radius: 30px; color: #fff; font-weight: 600; cursor: pointer; font-size: 16px; transition: 0.3s; margin-top: 5px; }
         .btn-submit:hover { opacity: 0.95; transform: translateY(-2px); }
 
-        /* VIP QR Codes Block Section */
+        /* Scan & Connect QR Codes Panel */
         .qr-section { background: var(--light); border-top: 1px solid #eee; width: 100%; padding: 80px 8%; text-align: center; }
         .qr-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 20px; margin-top: 35px; max-width: 1100px; margin-left: auto; margin-right: auto; }
         .qr-card { background: #fff; padding: 20px 15px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.04); text-align: center; border: 1px solid #eef0f3; transition: 0.3s; }
@@ -434,7 +436,7 @@
                     <div class="contact-item"><i class="fa-solid fa-phone"></i><span>0345-8292319 / 0336-9282319</span></div>
                     <div class="contact-item"><i class="fa-solid fa-envelope"></i><span><a href="mailto:hamarap@gmail.com">hamarap@gmail.com</a></span></div>
                     <div class="contact-item"><i class="fa-brands fa-instagram"></i><span><a href="https://instagram.com/hamara.printing.press" target="_blank">hamara.printing.press</a></span></div>
-                    <div class="contact-item"><i class="fa-brands fa-facebook"></i><span><a href="https://www.facebook.com/profile.php?id=100004070285245" target="_blank">Hamara Printing Press</a></span></div>
+                    <div class="contact-item"><i class="fa-brands fa-facebook"></i><span><a href="https://www.facebook.com/profile.php?id=100004070285245" target="_blank">hamara.printing.press</a></span></div>
                     <div class="contact-item"><i class="fa-brands fa-linkedin"></i><span><a href="https://www.linkedin.com/in/hamara-printing-press-687615414" target="_blank">Hamara Printing Press</a></span></div>
                     <div class="contact-item"><i class="fa-solid fa-location-dot"></i><span>Shop # 73-75, Sector 5-G, Main Road Sindhi Hotel, New Karachi.</span></div>
                 </div>
@@ -444,7 +446,9 @@
                 <form action="https://formspree.io/f/mojzvogo" method="POST">
                     <div class="form-group"><input type="text" name="Name" placeholder="Your Name" required></div>
                     <div class="form-group"><input type="email" name="Email" placeholder="Email Address" required></div>
-                    <div class="form-group"><textarea name="Message" rows="4" placeholder="Your Message" required></textarea></div>
+                    <div class="form-group"><input type="text" name="Product" placeholder="Product" required></div>
+                    <div class="form-group"><input type="text" name="Quantity" placeholder="Quantity" required></div>
+                    <div class="form-group"><textarea name="Message" rows="4" placeholder="Your Message / Specific Instructions" required></textarea></div>
                     <button type="submit" class="btn-submit">Send Message</button>
                 </form>
             </div>
@@ -483,7 +487,7 @@
     <script>
         AOS.init({ once: false, mirror: true });
 
-        // Responsive Smartphone Menu Toggling Feature Fix
+        // Responsive Hamburger Menu
         const mobileMenuBtn = document.getElementById('mobile-menu-btn');
         const navMenu = document.getElementById('nav-menu');
         const mobileLinks = document.querySelectorAll('.nav-link');
@@ -505,7 +509,7 @@
             });
         });
 
-        // Auto Highlighting Links matching Window scrolling positions
+        // Auto Highlighting Links
         const sections = document.querySelectorAll('section, div.clients-section');
         const navLinks = document.querySelectorAll('.nav-link');
 
