@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta name="google-site-verification" content="ykY_qzPJEd5aUy0fQoRdK7cC23AP3ontXEPXne41gss" />
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Hamara Printing Press</title>
@@ -35,11 +34,11 @@
         /* Mobile Hamburger Menu Icon Setup */
         .menu-toggle { display: none; font-size: 26px; color: var(--dark); cursor: pointer; background: none; border: none; outline: none; padding: 5px; z-index: 1001; }
 
-        /* Hero Section Fix with absolute video enforcement */
-        .hero { position: relative; height: 85vh; display: flex; align-items: center; justify-content: center; overflow: hidden; text-align: center; color: #fff; padding: 0 20px; width: 100%; background: #000; }
+        /* Hero Section - gradient fallback background, video plays on top if press-video.mp4 exists */
+        .hero { position: relative; height: 85vh; display: flex; align-items: center; justify-content: center; overflow: hidden; text-align: center; color: #fff; padding: 0 20px; width: 100%; background: linear-gradient(135deg, var(--primary), var(--dark) 60%, var(--secondary)); }
         .video-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; overflow: hidden; }
         .video-container video { position: absolute; top: 50%; left: 50%; min-width: 100%; min-height: 100%; width: auto; height: auto; transform: translate(-50%, -50%); object-fit: cover; }
-        .video-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.65); z-index: 2; }
+        .video-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.35); z-index: 2; }
         
         .hero-text { max-width: 850px; z-index: 3; position: relative; }
         .badge { background-color: var(--yellow); color: #000; padding: 5px 15px; font-weight: 700; border-radius: 5px; display: inline-block; margin-bottom: 20px; font-size: 14px; }
@@ -187,6 +186,178 @@
         @media (max-width: 480px) {
             .qr-grid { grid-template-columns: 1fr; max-width: 220px; margin-left: auto; margin-right: auto; }
         }
+
+        /* ===================== */
+        /* WhatsApp Chat Widget */
+        /* ===================== */
+        .wa-widget-launcher {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            width: 60px;
+            height: 60px;
+            background: #25D366;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.25);
+            cursor: pointer;
+            z-index: 2000;
+            transition: transform 0.25s ease;
+            animation: wa-pulse 1.6s infinite, wa-bounce 2.4s ease-in-out infinite;
+        }
+        .wa-widget-launcher:hover { transform: scale(1.15); animation-play-state: paused; }
+        .wa-widget-launcher i { color: #fff; font-size: 30px; }
+        .wa-notify-dot {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            width: 16px;
+            height: 16px;
+            background: #ff3b30;
+            border-radius: 50%;
+            border: 2px solid #fff;
+            animation: wa-dot-blink 1.2s infinite;
+        }
+
+        @keyframes wa-pulse {
+            0% { box-shadow: 0 5px 20px rgba(0,0,0,0.25), 0 0 0 0 rgba(37,211,102,0.6); }
+            70% { box-shadow: 0 5px 20px rgba(0,0,0,0.25), 0 0 0 18px rgba(37,211,102,0); }
+            100% { box-shadow: 0 5px 20px rgba(0,0,0,0.25), 0 0 0 0 rgba(37,211,102,0); }
+        }
+        @keyframes wa-bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+        @keyframes wa-dot-blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .wa-chat-box {
+            position: fixed;
+            bottom: 100px;
+            right: 25px;
+            width: 320px;
+            max-width: calc(100vw - 30px);
+            background: #fff;
+            border-radius: 14px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.25);
+            overflow: hidden;
+            z-index: 2000;
+            opacity: 0;
+            transform: translateY(30px) scale(0.9);
+            pointer-events: none;
+            transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .wa-chat-box.open {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            pointer-events: auto;
+        }
+
+        .wa-chat-header {
+            background: #1e3c72;
+            background: linear-gradient(135deg, #1e3c72, #128C7E);
+            padding: 18px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            position: relative;
+            color: #fff;
+        }
+        .wa-chat-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            color: #1e3c72;
+            flex-shrink: 0;
+            position: relative;
+            overflow: hidden;
+        }
+        .wa-chat-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .wa-online-dot {
+            position: absolute;
+            bottom: -2px;
+            right: -2px;
+            width: 11px;
+            height: 11px;
+            background: #4ade80;
+            border: 2px solid #fff;
+            border-radius: 50%;
+        }
+        .wa-chat-header-text h4 { font-size: 15px; font-weight: 700; margin: 0; }
+        .wa-chat-header-text span { font-size: 12px; opacity: 0.85; }
+        .wa-chat-close {
+            position: absolute;
+            top: 12px;
+            right: 14px;
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 18px;
+            cursor: pointer;
+            opacity: 0.85;
+        }
+        .wa-chat-close:hover { opacity: 1; }
+
+        .wa-chat-body {
+            background: #e9e2d7;
+            background-image: radial-gradient(rgba(0,0,0,0.04) 1px, transparent 1px);
+            background-size: 16px 16px;
+            padding: 20px 16px;
+            min-height: 130px;
+        }
+        .wa-bubble {
+            background: #fff;
+            border-radius: 10px;
+            padding: 10px 14px;
+            font-size: 14px;
+            color: #333;
+            max-width: 85%;
+            margin-bottom: 10px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+            line-height: 1.4;
+        }
+        .wa-time {
+            text-align: center;
+            font-size: 11px;
+            color: #999;
+            margin-bottom: 12px;
+        }
+
+        .wa-chat-footer { padding: 14px 16px 18px; background: #fff; }
+        .wa-chat-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: #25D366;
+            color: #fff;
+            text-decoration: none;
+            padding: 12px;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 14px;
+            transition: 0.25s;
+        }
+        .wa-chat-btn:hover { background: #1ebd5a; }
+        .wa-chat-btn i { font-size: 18px; }
+
+        @media (max-width: 480px) {
+            .wa-chat-box { right: 15px; bottom: 95px; }
+            .wa-widget-launcher { right: 15px; bottom: 20px; }
+        }
     </style>
 </head>
 <body>
@@ -208,7 +379,7 @@
                 <li><a href="#contact" class="nav-link">Contact</a></li>
             </ul>
         </nav>
-        <a href="#contact" class="btn-quote">Get Quote</a>
+        <a href="#contact" class="btn-quote">Contact Us</a>
     </header>
 
     <section id="home" class="hero">
@@ -243,15 +414,15 @@
         </div>
 
         <div class="stats-container">
-            <div class="stat-box" data-aos="slide-up" data-aos-duration="1000" data-aos-delay="100">
+            <div class="stat-box" data-aos="zoom-in" data-aos-duration="800" data-aos-delay="100">
                 <h2>37+</h2>
                 <p>Years of Industrial Trust</p>
             </div>
-            <div class="stat-box" data-aos="slide-up" data-aos-duration="1000" data-aos-delay="200">
+            <div class="stat-box" data-aos="zoom-in" data-aos-duration="800" data-aos-delay="250">
                 <h2>5000+</h2>
                 <p>Local Clients</p>
             </div>
-            <div class="stat-box" data-aos="slide-up" data-aos-duration="1000" data-aos-delay="300">
+            <div class="stat-box" data-aos="zoom-in" data-aos-duration="800" data-aos-delay="400">
                 <h2>4000+</h2>
                 <p>Corporate Orders</p>
             </div>
@@ -262,7 +433,7 @@
         <h2 class="section-title" data-aos="fade-up">Services Available For Our Valuable Clients</h2>
         <div class="clients-grid">
             
-            <div class="client-card-container" data-aos="fade-up" data-aos-delay="100">
+            <div class="client-card-container" data-aos="fade-right" data-aos-delay="100">
                 <div class="client-main-box">
                     <i class="fa-solid fa-graduation-cap"></i>
                     <h4>School / Colleges / Coaching Center</h4>
@@ -292,7 +463,7 @@
                 </div>
             </div>
 
-            <div class="client-card-container" data-aos="fade-up" data-aos-delay="200">
+            <div class="client-card-container" data-aos="fade-left" data-aos-delay="200">
                 <div class="client-main-box">
                     <i class="fa-solid fa-shirt"></i>
                     <h4>Textile / Towel Industries</h4>
@@ -306,7 +477,7 @@
                 </div>
             </div>
 
-            <div class="client-card-container" data-aos="fade-up" data-aos-delay="250">
+            <div class="client-card-container" data-aos="fade-right" data-aos-delay="250">
                 <div class="client-main-box">
                     <i class="fa-solid fa-hospital"></i>
                     <h4>Clinics / Hospitals</h4>
@@ -333,7 +504,7 @@
                 </div>
             </div>
 
-            <div class="client-card-container" data-aos="fade-up" data-aos-delay="350">
+            <div class="client-card-container" data-aos="fade-left" data-aos-delay="350">
                 <div class="client-main-box">
                     <i class="fa-solid fa-scissors"></i>
                     <h4>Garments</h4>
@@ -347,7 +518,7 @@
                 </div>
             </div>
 
-            <div class="client-card-container" data-aos="fade-up" data-aos-delay="400">
+            <div class="client-card-container" data-aos="fade-right" data-aos-delay="400">
                 <div class="client-main-box">
                     <i class="fa-solid fa-plug"></i>
                     <h4>Electronic / Installment Shops</h4>
@@ -362,7 +533,7 @@
                 </div>
             </div>
 
-            <div class="client-card-container" data-aos="fade-up" data-aos-delay="450">
+            <div class="client-card-container" data-aos="fade-left" data-aos-delay="450">
                 <div class="client-main-box">
                     <i class="fa-solid fa-building"></i>
                     <h4>Property / Builders</h4>
@@ -382,39 +553,39 @@
     <section id="services" class="services">
         <h2 class="section-title" data-aos="fade-up">Our Services</h2>
         <div class="services-grid">
-            <div class="service-card" data-aos="fade-up" data-aos-delay="100"><i class="fa-solid fa-print"></i><h3>Offset Printing</h3><p>Brochures, Flyers, Bill Books.</p></div>
-            <div class="service-card" data-aos="fade-up" data-aos-delay="200"><i class="fa-solid fa-computer"></i><h3>Digital Printing</h3><p>Urgent High-Resolution Printing.</p></div>
-            <div class="service-card" data-aos="fade-up" data-aos-delay="300"><i class="fa-solid fa-scroll"></i><h3>Flex Printing</h3><p>Panaflex and Shop Boards.</p></div>
-            <div class="service-card" data-aos="fade-up" data-aos-delay="400"><i class="fa-solid fa-wand-magic-sparkles"></i><h3>UV Printing</h3><p>3D print on acrylic, wood, covers.</p></div>
-            <div class="service-card" data-aos="fade-up" data-aos-delay="500"><i class="fa-solid fa-palette"></i><h3>Screen Printing</h3><p>Printing on shopping bags & boxes.</p></div>
-            <div class="service-card" data-aos="fade-up" data-aos-delay="600"><i class="fa-solid fa-pen-nib"></i><h3>Graphic Designing</h3><p>Creative Business Branding.</p></div>
-        </div>
-    </section>
-
-    <section id="machines" class="machines">
-        <h2 class="section-title" data-aos="fade-up">Our Machines</h2>
-        <div class="machines-grid">
-            <div class="machine-card" data-aos="zoom-in"><img src="panaflex-machine.jpg" alt="Machine"><h3>Panaflex Printing Machine</h3></div>
-            <div class="machine-card" data-aos="zoom-in"><img src="offset-machine.jpg" alt="Machine"><h3>Offset Printing Machine</h3></div>
-            <div class="machine-card" data-aos="zoom-in"><img src="epson-printer.jpg" alt="Machine"><h3>Epson Large Format Printer</h3></div>
-            <div class="machine-card" data-aos="zoom-in"><img src="cutting-machine.jpg" alt="Machine"><h3>Paper Cutting Machine</h3></div>
-            <div class="machine-card" data-aos="zoom-in"><img src="screen-printing-machine.jpg" alt="Machine"><h3>Screen Printing Machine</h3></div>
-            <div class="machine-card" data-aos="zoom-in"><img src="die-cutting-machine.jpg" alt="Machine"><h3>Die-Cutting Machine</h3></div>
+            <div class="service-card" data-aos="zoom-in" data-aos-delay="100"><i class="fa-solid fa-print"></i><h3>Offset Printing</h3><p>Brochures, Flyers, Bill Books.</p></div>
+            <div class="service-card" data-aos="zoom-in" data-aos-delay="200"><i class="fa-solid fa-computer"></i><h3>Digital Printing</h3><p>Urgent High-Resolution Printing.</p></div>
+            <div class="service-card" data-aos="zoom-in" data-aos-delay="300"><i class="fa-solid fa-scroll"></i><h3>Flex Printing</h3><p>Panaflex and Shop Boards.</p></div>
+            <div class="service-card" data-aos="zoom-in" data-aos-delay="400"><i class="fa-solid fa-wand-magic-sparkles"></i><h3>UV Printing</h3><p>3D print on acrylic, wood, covers.</p></div>
+            <div class="service-card" data-aos="zoom-in" data-aos-delay="500"><i class="fa-solid fa-palette"></i><h3>Screen Printing</h3><p>Printing on shopping bags & boxes.</p></div>
+            <div class="service-card" data-aos="zoom-in" data-aos-delay="600"><i class="fa-solid fa-pen-nib"></i><h3>Graphic Designing</h3><p>Creative Business Branding.</p></div>
         </div>
     </section>
 
     <section id="portfolio" class="portfolio">
         <h2 class="section-title" data-aos="fade-up">Our Portfolio</h2>
         <div class="portfolio-grid">
-            <div class="portfolio-card" data-aos="fade-up" data-aos-delay="100"><div class="portfolio-img-wrapper"><img src="work1.jpg" alt="Portfolio Image"></div><div class="portfolio-name-box"><h4>Visiting Card</h4></div></div>
-            <div class="portfolio-card" data-aos="fade-up" data-aos-delay="150"><div class="portfolio-img-wrapper"><img src="work2.jpg" alt="Portfolio Image"></div><div class="portfolio-name-box"><h4>Panaflex</h4></div></div>
-            <div class="portfolio-card" data-aos="fade-up" data-aos-delay="200"><div class="portfolio-img-wrapper"><img src="work3.jpg" alt="Portfolio Image"></div><div class="portfolio-name-box"><h4>Letter Head</h4></div></div>
-            <div class="portfolio-card" data-aos="fade-up" data-aos-delay="250"><div class="portfolio-img-wrapper"><img src="work4.jpg" alt="Portfolio Image"></div><div class="portfolio-name-box"><h4>Bill Book</h4></div></div>
-            <div class="portfolio-card" data-aos="fade-up" data-aos-delay="300"><div class="portfolio-img-wrapper"><img src="work5.jpg" alt="Portfolio Image"></div><div class="portfolio-name-box"><h4>Shadi Card</h4></div></div>
-            <div class="portfolio-card" data-aos="fade-up" data-aos-delay="350"><div class="portfolio-img-wrapper"><img src="work6.jpg" alt="Portfolio Image"></div><div class="portfolio-name-box"><h4>Garments Tag</h4></div></div>
-            <div class="portfolio-card" data-aos="fade-up" data-aos-delay="400"><div class="portfolio-img-wrapper"><img src="work7.jpg" alt="Portfolio Image"></div><div class="portfolio-name-box"><h4>Pamphlet</h4></div></div>
-            <div class="portfolio-card" data-aos="fade-up" data-aos-delay="450"><div class="portfolio-img-wrapper"><img src="work8.jpg" alt="Portfolio Image"></div><div class="portfolio-name-box"><h4>Satin Label</h4></div></div>
-            <div class="portfolio-card" data-aos="fade-up" data-aos-delay="500"><div class="portfolio-img-wrapper"><img src="work9.jpg" alt="Portfolio Image"></div><div class="portfolio-name-box"><h4>Woven Label</h4></div></div>
+            <div class="portfolio-card" data-aos="flip-left" data-aos-delay="100"><div class="portfolio-img-wrapper"><img src="work1.jpg" alt="Portfolio Image"></div><div class="portfolio-name-box"><h4>Visiting Card</h4></div></div>
+            <div class="portfolio-card" data-aos="flip-left" data-aos-delay="150"><div class="portfolio-img-wrapper"><img src="work2.jpg" alt="Portfolio Image"></div><div class="portfolio-name-box"><h4>Panaflex</h4></div></div>
+            <div class="portfolio-card" data-aos="flip-left" data-aos-delay="200"><div class="portfolio-img-wrapper"><img src="work3.jpg" alt="Portfolio Image"></div><div class="portfolio-name-box"><h4>Letter Head</h4></div></div>
+            <div class="portfolio-card" data-aos="flip-left" data-aos-delay="250"><div class="portfolio-img-wrapper"><img src="work4.jpg" alt="Portfolio Image"></div><div class="portfolio-name-box"><h4>Bill Book</h4></div></div>
+            <div class="portfolio-card" data-aos="flip-left" data-aos-delay="300"><div class="portfolio-img-wrapper"><img src="work5.jpg" alt="Portfolio Image"></div><div class="portfolio-name-box"><h4>Shadi Card</h4></div></div>
+            <div class="portfolio-card" data-aos="flip-left" data-aos-delay="350"><div class="portfolio-img-wrapper"><img src="work6.jpg" alt="Portfolio Image"></div><div class="portfolio-name-box"><h4>Garments Tag</h4></div></div>
+            <div class="portfolio-card" data-aos="flip-left" data-aos-delay="400"><div class="portfolio-img-wrapper"><img src="work7.jpg" alt="Portfolio Image"></div><div class="portfolio-name-box"><h4>Pamphlet</h4></div></div>
+            <div class="portfolio-card" data-aos="flip-left" data-aos-delay="450"><div class="portfolio-img-wrapper"><img src="work8.jpg" alt="Portfolio Image"></div><div class="portfolio-name-box"><h4>Satin Label</h4></div></div>
+            <div class="portfolio-card" data-aos="flip-left" data-aos-delay="500"><div class="portfolio-img-wrapper"><img src="work9.jpg" alt="Portfolio Image"></div><div class="portfolio-name-box"><h4>Woven Label</h4></div></div>
+        </div>
+    </section>
+
+    <section id="machines" class="machines">
+        <h2 class="section-title" data-aos="fade-up">Our Machines</h2>
+        <div class="machines-grid">
+            <div class="machine-card" data-aos="flip-up" data-aos-delay="100"><img src="panaflex-machine.jpg" alt="Machine"><h3>Panaflex Printing Machine</h3></div>
+            <div class="machine-card" data-aos="flip-up" data-aos-delay="200"><img src="offset-machine.jpg" alt="Machine"><h3>Offset Printing Machine</h3></div>
+            <div class="machine-card" data-aos="flip-up" data-aos-delay="300"><img src="epson-printer.jpg" alt="Machine"><h3>Epson Large Format Printer</h3></div>
+            <div class="machine-card" data-aos="flip-up" data-aos-delay="400"><img src="cutting-machine.jpg" alt="Machine"><h3>Paper Cutting Machine</h3></div>
+            <div class="machine-card" data-aos="flip-up" data-aos-delay="500"><img src="screen-printing-machine.jpg" alt="Machine"><h3>Screen Printing Machine</h3></div>
+            <div class="machine-card" data-aos="flip-up" data-aos-delay="600"><img src="die-cutting-machine.jpg" alt="Machine"><h3>Die-Cutting Machine</h3></div>
         </div>
     </section>
 
@@ -484,9 +655,41 @@
 
     <footer><p>&copy; 2026 Hamara Printing Press. All Rights Reserved.</p></footer>
 
+    <!-- ===================== -->
+    <!-- WhatsApp Chat Widget -->
+    <!-- ===================== -->
+    <div class="wa-chat-box" id="waChatBox">
+        <button class="wa-chat-close" id="waChatClose"><i class="fa-solid fa-xmark"></i></button>
+        <div class="wa-chat-header">
+            <div class="wa-chat-avatar">
+                <img src="dp.png" alt="Hamara Printing Press">
+                <span class="wa-online-dot"></span>
+            </div>
+            <div class="wa-chat-header-text">
+                <h4>Hamara Printing Press</h4>
+                <span>Online</span>
+            </div>
+        </div>
+        <div class="wa-chat-body">
+            <div class="wa-time">Today</div>
+            <div class="wa-bubble">Assalam-o-Alaikum! Welcome to Hamara Printing Press</div>
+            <div class="wa-bubble">For any kind of printing, get in touch with us.</div>
+        </div>
+        <div class="wa-chat-footer">
+            <a href="https://wa.me/923458292319?text=Hi%2C%20I%20would%20like%20to%20get%20a%20printing%20quote." target="_blank" class="wa-chat-btn">
+                <i class="fa-brands fa-whatsapp"></i> Chat on WhatsApp
+            </a>
+        </div>
+    </div>
+
+    <div class="wa-widget-launcher" id="waLauncher">
+        <span class="wa-notify-dot"></span>
+        <i class="fa-brands fa-whatsapp"></i>
+    </div>
+
     <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
     <script>
-        AOS.init({ once: false, mirror: true });
+        AOS.init({ once: false, mirror: true, duration: 900, easing: 'ease-out-cubic', offset: 80 });
 
         // Responsive Hamburger Menu
         const mobileMenuBtn = document.getElementById('mobile-menu-btn');
@@ -529,6 +732,21 @@
                     link.classList.add('active');
                 }
             });
+        });
+
+        // WhatsApp Chat Widget Toggle
+        const waLauncher = document.getElementById('waLauncher');
+        const waChatBox = document.getElementById('waChatBox');
+        const waChatClose = document.getElementById('waChatClose');
+        const waNotifyDot = waLauncher.querySelector('.wa-notify-dot');
+
+        waLauncher.addEventListener('click', () => {
+            waChatBox.classList.toggle('open');
+            if (waNotifyDot) waNotifyDot.style.display = 'none';
+        });
+
+        waChatClose.addEventListener('click', () => {
+            waChatBox.classList.remove('open');
         });
     </script>
 </body>
